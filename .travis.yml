@@ -15,8 +15,21 @@ after_success:
   - docker build -t yuryliberau/multi-worker ./worker
   # Log in to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  # Take thos images and push them to docker hub
+  # Take these images and push them to docker hub
   - docker push yuryliberau/multi-client
   - docker push yuryliberau/multi-nginx
   - docker push yuryliberau/multi-server
   - docker push yuryliberau/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: us-west-1
+  app: multi-docker
+  env: MultiDocker-env
+  bucket_name: elasticbeanstalk-us-west-1-306476627547
+  bucket_path: docker-multi
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY
